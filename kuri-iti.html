@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuri Iti — Tienda online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     EDITAR PRODUCTOS: busca "CATALOGO DE PRODUCTOS" más abajo en
+     el bloque <script> al final del archivo. Ahí puedes cambiar
+     nombre, precio, categoría e imagen de cada producto.
+     ============================================================ */
+
+  :root{
+    --ink:#221f19;
+    --bone:#efe6d4;
+    --bone-soft:#f6f0e4;
+    --gold:#c08a2e;
+    --gold-deep:#9c6f22;
+    --teal:#33635b;
+    --terracotta:#a24e36;
+    --line: rgba(34,31,25,.12);
+    --shadow: 0 18px 40px rgba(34,31,25,.14);
+    --radius: 14px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bone-soft);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'JetBrains Mono', monospace;}
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  img{display:block;max-width:100%;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:rgba(246,240,228,.9);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;max-width:1180px;margin:0 auto;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Fraunces', serif;font-weight:700;font-size:1.35rem;
+  }
+  .coin{
+    width:34px;height:34px;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #f0cf88, var(--gold) 55%, var(--gold-deep) 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink);font-family:'Fraunces',serif;font-weight:700;font-size:.95rem;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.12), 0 3px 8px rgba(156,111,34,.35);
+  }
+  .navlinks{display:flex;gap:28px;align-items:center;}
+  .navlinks a{
+    font-size:.92rem;font-weight:500;color:var(--ink);
+    position:relative;padding:4px 0;
+  }
+  .navlinks a::after{
+    content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;
+    background:var(--gold);transition:width .25s ease;
+  }
+  .navlinks a:hover::after{width:100%;}
+  .cart-btn{
+    display:flex;align-items:center;gap:8px;
+    background:var(--ink);color:var(--bone-soft);
+    border:none;border-radius:999px;padding:10px 18px;
+    font-size:.88rem;font-weight:600;
+  }
+  .cart-btn:hover{background:var(--gold-deep);}
+  .cart-count{
+    background:var(--gold);color:var(--ink);
+    min-width:20px;height:20px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.72rem;font-weight:700;padding:0 4px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:88px 24px 70px;
+    position:relative;overflow:hidden;
+  }
+  .hero .wrap{
+    display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--gold-deep);
+    margin-bottom:18px;
+  }
+  .eyebrow::before{content:"";width:20px;height:1px;background:var(--gold-deep);}
+  .hero h1{
+    font-size:clamp(2.3rem, 5vw, 3.6rem);
+    line-height:1.05;
+    margin-bottom:20px;
+  }
+  .hero h1 em{
+    font-style:normal;color:var(--gold-deep);
+  }
+  .hero p{
+    font-size:1.05rem;line-height:1.6;color:#4a4335;
+    max-width:44ch;margin-bottom:32px;
+  }
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--ink);color:var(--bone-soft);
+    padding:14px 26px;border-radius:999px;border:none;
+    font-weight:600;font-size:.95rem;
+    box-shadow:var(--shadow);
+  }
+  .btn-primary:hover{background:var(--gold-deep);}
+  .btn-ghost{
+    background:transparent;color:var(--ink);
+    padding:14px 26px;border-radius:999px;border:1.5px solid var(--ink);
+    font-weight:600;font-size:.95rem;
+  }
+  .btn-ghost:hover{border-color:var(--gold-deep);color:var(--gold-deep);}
+
+  .hero-art{
+    position:relative;aspect-ratio:1/1;border-radius:24px;
+    background:
+      radial-gradient(circle at 30% 25%, rgba(240,207,136,.55), transparent 55%),
+      linear-gradient(155deg, var(--teal) 0%, #24463f 100%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow);
+  }
+  .hero-art .coin-big{
+    width:46%;aspect-ratio:1/1;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%, #f6dd9e, var(--gold) 55%, var(--gold-deep) 100%);
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,.1), 0 20px 40px rgba(0,0,0,.25);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;color:var(--ink);
+    font-size:clamp(2rem,6vw,3.4rem);
+  }
+
+  /* thread divider — firma visual */
+  .thread{
+    height:26px;
+    background-image: repeating-linear-gradient(90deg, var(--gold) 0 14px, transparent 14px 26px);
+    background-size:26px 2px;
+    background-repeat:repeat-x;
+    background-position:center;
+    opacity:.55;
+  }
+
+  /* ---------- Section shell ---------- */
+  section.block{padding:64px 24px;}
+  .section-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:24px;margin-bottom:32px;flex-wrap:wrap;
+  }
+  .section-head h2{font-size:clamp(1.6rem,3vw,2.2rem);}
+  .section-head p{color:#5c5343;max-width:48ch;margin-top:8px;font-size:.95rem;}
+
+  /* ---------- Category tabs ---------- */
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px;}
+  .tab{
+    padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);
+    background:var(--bone-soft);font-size:.85rem;font-weight:600;color:#5c5343;
+  }
+  .tab.active{background:var(--ink);color:var(--bone-soft);border-color:var(--ink);}
+
+  /* ---------- Product grid ---------- */
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:22px;
+  }
+  .card{
+    background:var(--bone-soft);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+  .card .thumb{
+    aspect-ratio:1/1;width:100%;object-fit:cover;background:var(--bone);
+  }
+  .card .info{padding:16px 16px 18px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .card .cat{
+    font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--teal);
+  }
+  .card h3{font-size:1.05rem;line-height:1.3;}
+  .card .price{
+    font-family:'JetBrains Mono',monospace;font-weight:600;font-size:1rem;
+    color:var(--gold-deep);margin-top:auto;
+  }
+  .add-btn{
+    margin-top:6px;width:100%;
+    background:var(--ink);color:var(--bone-soft);
+    border:none;border-radius:8px;padding:11px;
+    font-weight:600;font-size:.85rem;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .add-btn:hover{background:var(--gold-deep);}
+  .add-btn.added{background:var(--teal);}
+  .mp-btn{
+    margin-top:6px;width:100%;
+    background:#009ee3;color:#fff;
+    border:none;border-radius:8px;padding:11px;
+    font-weight:600;font-size:.85rem;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .mp-btn:hover{background:#0086c3;}
+
+  /* ---------- Sobre / contacto ---------- */
+  .about{
+    background:var(--ink);color:var(--bone-soft);
+    border-radius:24px;margin:0 24px;padding:56px 40px;
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;
+  }
+  .about h2{color:var(--bone-soft);font-size:clamp(1.5rem,3vw,2rem);margin-bottom:14px;}
+  .about p{color:#cfc6b4;line-height:1.6;font-size:.98rem;max-width:42ch;}
+  .contact-list{display:flex;flex-direction:column;gap:16px;}
+  .contact-item{
+    display:flex;align-items:center;gap:14px;
+    padding:14px 16px;border:1px solid rgba(239,230,212,.18);
+    border-radius:12px;
+  }
+  .contact-item .ico{
+    width:38px;height:38px;border-radius:50%;
+    background:var(--gold);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    font-weight:700;
+  }
+  .contact-item .label{font-size:.72rem;color:#a89f8c;text-transform:uppercase;letter-spacing:.06em;font-family:'JetBrains Mono',monospace;}
+  .contact-item .value{font-weight:600;}
+  .contact-item:hover{border-color:var(--gold);}
+
+  footer{padding:36px 24px;text-align:center;color:#8a8270;font-size:.82rem;}
+
+  /* ---------- Floating WhatsApp consult ---------- */
+  .wa-float{
+    position:fixed;right:22px;bottom:22px;z-index:50;
+    background:#25D366;color:#fff;
+    width:60px;height:60px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 12px 30px rgba(37,211,102,.45);
+    border:none;
+  }
+  .wa-float svg{width:28px;height:28px;}
+  .wa-float:hover{transform:scale(1.06);}
+
+  /* ---------- Cart drawer ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(34,31,25,.45);
+    opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:60;
+  }
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;right:0;height:100%;width:min(420px,92vw);
+    background:var(--bone-soft);z-index:70;
+    transform:translateX(100%);transition:transform .3s ease;
+    display:flex;flex-direction:column;
+    box-shadow:-20px 0 50px rgba(0,0,0,.25);
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{
+    padding:22px 24px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .drawer-head h3{font-size:1.3rem;}
+  .close-btn{
+    background:none;border:none;font-size:1.4rem;color:var(--ink);line-height:1;
+  }
+  .drawer-body{flex:1;overflow-y:auto;padding:18px 24px;}
+  .empty-cart{color:#8a8270;text-align:center;padding:60px 10px;font-size:.92rem;}
+  .cart-line{
+    display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);
+  }
+  .cart-line img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;}
+  .cart-line .cl-info{flex:1;display:flex;flex-direction:column;gap:4px;}
+  .cart-line h4{font-size:.92rem;font-weight:600;}
+  .cart-line .cl-price{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--gold-deep);}
+  .qty-ctrl{display:flex;align-items:center;gap:10px;margin-top:2px;}
+  .qty-ctrl button{
+    width:24px;height:24px;border-radius:50%;border:1px solid var(--line);
+    background:var(--bone);font-weight:700;font-size:.85rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .qty-ctrl .qty-num{font-family:'JetBrains Mono',monospace;font-size:.85rem;min-width:16px;text-align:center;}
+  .remove-line{background:none;border:none;color:#a24e36;font-size:.78rem;text-decoration:underline;align-self:flex-start;padding:0;}
+
+  .drawer-foot{padding:20px 24px 26px;border-top:1px solid var(--line);}
+  .subtotal-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
+  .subtotal-row .label{font-size:.85rem;color:#5c5343;}
+  .subtotal-row .amount{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:600;}
+  .wa-checkout{
+    width:100%;background:#1f7a4d;color:#fff;border:none;border-radius:10px;
+    padding:15px;font-weight:700;font-size:.95rem;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .wa-checkout:hover{background:#175f3c;}
+  .wa-checkout:disabled{background:#b8ae9a;cursor:not-allowed;}
+
+  @media (max-width:860px){
+    .hero .wrap{grid-template-columns:1fr;}
+    .hero-art{order:-1;max-width:320px;margin:0 auto;}
+    .about{grid-template-columns:1fr;padding:36px 24px;margin:0 16px;}
+    .navlinks{display:none;}
+  }
+
+  :focus-visible{outline:2px solid var(--gold-deep);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo"><span class="coin">K</span> Kuri Iti</div>
+    <nav class="navlinks">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#sobre">Contacto</a>
+    </nav>
+    <button class="cart-btn" id="openCart" aria-label="Abrir carrito">
+      🛍️ Carrito <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Tienda online</div>
+      <h1>Todo lo que buscas,<br><em>en un solo lugar.</em></h1>
+      <p>En Kuri Iti encuentras productos para el día a día, elegidos con cuidado. Arma tu pedido y coordina la entrega directo por WhatsApp.</p>
+      <div class="hero-ctas">
+        <a href="#catalogo" class="btn-primary">Ver catálogo</a>
+        <a href="https://wa.me/56976792969?text=Hola%20Kuri%20Iti%2C%20quiero%20consultar%20por%20un%20producto" target="_blank" rel="noopener" class="btn-ghost">Consultar por WhatsApp</a>
+      </div>
+    </div>
+    <div class="hero-art"><div class="coin-big">KI</div></div>
+  </div>
+</section>
+
+<div class="thread"></div>
+
+<section class="block" id="catalogo">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Catálogo</h2>
+        <p>Filtra por categoría o revisa todo lo disponible. Los precios se actualizan según stock.</p>
+      </div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<div class="thread"></div>
+
+<section class="block" id="sobre">
+  <div class="about wrap" style="max-width:1132px;">
+    <div>
+      <h2>Escríbenos</h2>
+      <p>¿Tienes dudas sobre un producto, stock o despacho? Contáctanos directo — respondemos por WhatsApp, correo o Instagram.</p>
+    </div>
+    <div class="contact-list">
+      <a class="contact-item" href="https://wa.me/56976792969" target="_blank" rel="noopener">
+        <span class="ico">W</span>
+        <span><span class="label">WhatsApp</span><br><span class="value">+56 9 7679 2969</span></span>
+      </a>
+      <a class="contact-item" href="mailto:kuri.itid@gmail.com">
+        <span class="ico">@</span>
+        <span><span class="label">Correo</span><br><span class="value">kuri.itid@gmail.com</span></span>
+      </a>
+      <a class="contact-item" href="https://instagram.com/kuri.iti" target="_blank" rel="noopener">
+        <span class="ico">IG</span>
+        <span><span class="label">Instagram</span><br><span class="value">@kuri.iti</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>© <span id="year"></span> Kuri Iti. Todos los derechos reservados.</footer>
+
+<!-- Botón flotante de WhatsApp -->
+<a class="wa-float" href="https://wa.me/56976792969?text=Hola%20Kuri%20Iti%2C%20tengo%20una%20consulta" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">
+  <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.34.67 4.523 1.834 6.375L4 29l7.834-1.79A11.94 11.94 0 0 0 16.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3zm0 21.75a9.7 9.7 0 0 1-4.95-1.35l-.355-.21-4.65 1.062 1.09-4.53-.232-.37A9.7 9.7 0 0 1 6.25 15c0-5.38 4.372-9.75 9.751-9.75 5.378 0 9.75 4.37 9.75 9.75s-4.372 9.75-9.75 9.75zm5.354-7.297c-.293-.147-1.733-.855-2.002-.953-.269-.098-.465-.147-.66.147-.196.293-.758.953-.929 1.148-.171.196-.343.22-.636.073-.293-.147-1.236-.456-2.354-1.454-.87-.776-1.458-1.735-1.629-2.028-.171-.293-.018-.451.129-.598.132-.132.293-.343.44-.514.147-.171.196-.293.293-.489.098-.196.049-.367-.024-.514-.073-.147-.66-1.59-.904-2.178-.238-.572-.48-.494-.66-.503l-.562-.01c-.196 0-.514.073-.783.367-.269.293-1.026 1.002-1.026 2.444s1.051 2.834 1.198 3.03c.147.196 2.07 3.16 5.016 4.432.701.303 1.248.484 1.674.62.703.224 1.343.192 1.849.117.564-.084 1.733-.708 1.978-1.392.244-.685.244-1.27.171-1.392-.073-.122-.269-.196-.562-.343z"/></svg>
+</a>
+
+<!-- Carrito -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Carrito de compras">
+  <div class="drawer-head">
+    <h3>Tu carrito</h3>
+    <button class="close-btn" id="closeCart" aria-label="Cerrar carrito">✕</button>
+  </div>
+  <div class="drawer-body" id="cartBody"></div>
+  <div class="drawer-foot">
+    <div class="subtotal-row">
+      <span class="label">Subtotal</span>
+      <span class="amount mono" id="subtotal">$0</span>
+    </div>
+    <button class="wa-checkout" id="waCheckout" disabled>Enviar pedido por WhatsApp</button>
+  </div>
+</aside>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ============================================================
+   CATALOGO DE PRODUCTOS — edita esta lista.
+   - name: nombre del producto
+   - price: precio en pesos (número, sin puntos)
+   - cat: categoría (crea las que quieras, se generan los filtros solos)
+   - img: URL de la foto. Reemplaza por el link de tu foto real
+     (por ejemplo subiendo la imagen a Imgur o Google Drive y
+     copiando el link público). Mientras tanto se ve un marcador.
+   - mpLink: (opcional) el link de pago de Mercado Pago para ESE
+     producto. Lo generas en mercadopago.cl > Link de pago.
+     Si lo dejas vacío (""), no aparece el botón de pago directo
+     y el producto solo se puede agregar al carrito para
+     consultar por WhatsApp.
+   ============================================================ */
+const PRODUCTS = [
+  { id:1, name:"Producto de ejemplo 1", price:9990,  cat:"Hogar",       img:"https://placehold.co/600x600/efe6d4/9c6f22?font=raleway&text=Foto%201", mpLink:"" },
+  { id:2, name:"Producto de ejemplo 2", price:14990, cat:"Hogar",       img:"https://placehold.co/600x600/efe6d4/33635b?font=raleway&text=Foto%202", mpLink:"" },
+  { id:3, name:"Producto de ejemplo 3", price:5990,  cat:"Accesorios",  img:"https://placehold.co/600x600/efe6d4/a24e36?font=raleway&text=Foto%203", mpLink:"" },
+  { id:4, name:"Producto de ejemplo 4", price:12990, cat:"Accesorios",  img:"https://placehold.co/600x600/efe6d4/9c6f22?font=raleway&text=Foto%204", mpLink:"" },
+  { id:5, name:"Producto de ejemplo 5", price:7990,  cat:"Variedades",  img:"https://placehold.co/600x600/efe6d4/33635b?font=raleway&text=Foto%205", mpLink:"" },
+  { id:6, name:"Producto de ejemplo 6", price:19990, cat:"Variedades",  img:"https://placehold.co/600x600/efe6d4/a24e36?font=raleway&text=Foto%206", mpLink:"" },
+];
+
+const WHATSAPP_NUMBER = "56976792969";
+const fmt = n => "$" + n.toLocaleString("es-CL");
+
+let cart = {};      // { productId: qty }
+let activeCat = "Todos";
+
+const grid = document.getElementById('grid');
+const tabsEl = document.getElementById('tabs');
+
+function renderTabs(){
+  const cats = ["Todos", ...new Set(PRODUCTS.map(p=>p.cat))];
+  tabsEl.innerHTML = cats.map(c =>
+    `<button class="tab ${c===activeCat?'active':''}" data-cat="${c}">${c}</button>`
+  ).join('');
+  tabsEl.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeCat = btn.dataset.cat;
+      renderTabs();
+      renderGrid();
+    });
+  });
+}
+
+function renderGrid(){
+  const items = activeCat==="Todos" ? PRODUCTS : PRODUCTS.filter(p=>p.cat===activeCat);
+  grid.innerHTML = items.map(p => `
+    <div class="card">
+      <img class="thumb" src="${p.img}" alt="${p.name}" loading="lazy">
+      <div class="info">
+        <span class="cat">${p.cat}</span>
+        <h3>${p.name}</h3>
+        <span class="price mono">${fmt(p.price)}</span>
+        <button class="add-btn" data-id="${p.id}">Agregar al carrito</button>
+        ${p.mpLink ? `<a class="mp-btn" href="${p.mpLink}" target="_blank" rel="noopener">Pagar con Mercado Pago</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+  grid.querySelectorAll('.add-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = Number(btn.dataset.id);
+      addToCart(id);
+      btn.textContent = "Agregado ✓";
+      btn.classList.add('added');
+      setTimeout(()=>{ btn.textContent = "Agregar al carrito"; btn.classList.remove('added'); }, 1100);
+    });
+  });
+}
+
+function addToCart(id){
+  cart[id] = (cart[id]||0) + 1;
+  renderCart();
+}
+function changeQty(id, delta){
+  if(!cart[id]) return;
+  cart[id] += delta;
+  if(cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+function removeFromCart(id){
+  delete cart[id];
+  renderCart();
+}
+
+function renderCart(){
+  const ids = Object.keys(cart);
+  const countEl = document.getElementById('cartCount');
+  const totalItems = ids.reduce((sum,id)=>sum+cart[id],0);
+  countEl.textContent = totalItems;
+
+  const body = document.getElementById('cartBody');
+  if(ids.length===0){
+    body.innerHTML = `<div class="empty-cart">Tu carrito está vacío.<br>Agrega productos desde el catálogo.</div>`;
+  } else {
+    body.innerHTML = ids.map(id=>{
+      const p = PRODUCTS.find(pr=>pr.id===Number(id));
+      const qty = cart[id];
+      return `
+        <div class="cart-line">
+          <img src="${p.img}" alt="${p.name}">
+          <div class="cl-info">
+            <h4>${p.name}</h4>
+            <span class="cl-price mono">${fmt(p.price)}</span>
+            <div class="qty-ctrl">
+              <button data-act="minus" data-id="${p.id}" aria-label="Restar">−</button>
+              <span class="qty-num">${qty}</span>
+              <button data-act="plus" data-id="${p.id}" aria-label="Sumar">+</button>
+            </div>
+            <button class="remove-line" data-act="remove" data-id="${p.id}">Quitar</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    body.querySelectorAll('[data-act]').forEach(btn=>{
+      const id = Number(btn.dataset.id);
+      const act = btn.dataset.act;
+      btn.addEventListener('click', ()=>{
+        if(act==="plus") changeQty(id, 1);
+        if(act==="minus") changeQty(id, -1);
+        if(act==="remove") removeFromCart(id);
+      });
+    });
+  }
+
+  const subtotal = ids.reduce((sum,id)=> sum + PRODUCTS.find(p=>p.id===Number(id)).price * cart[id], 0);
+  document.getElementById('subtotal').textContent = fmt(subtotal);
+
+  const waBtn = document.getElementById('waCheckout');
+  waBtn.disabled = ids.length===0;
+  waBtn.onclick = ()=>{
+    if(ids.length===0) return;
+    let msg = "Hola Kuri Iti, quiero hacer este pedido:%0A%0A";
+    ids.forEach(id=>{
+      const p = PRODUCTS.find(pr=>pr.id===Number(id));
+      msg += `• ${p.name} x${cart[id]} — ${fmt(p.price*cart[id])}%0A`;
+    });
+    msg += `%0ATotal: ${fmt(subtotal)}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
+  };
+}
+
+/* Drawer open/close */
+const overlay = document.getElementById('overlay');
+const drawer = document.getElementById('drawer');
+function openDrawer(){ overlay.classList.add('open'); drawer.classList.add('open'); }
+function closeDrawer(){ overlay.classList.remove('open'); drawer.classList.remove('open'); }
+document.getElementById('openCart').addEventListener('click', openDrawer);
+document.getElementById('closeCart').addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+
+renderTabs();
+renderGrid();
+renderCart();
+</script>
+</body>
+</html>
