@@ -416,9 +416,13 @@
     <div class="subtotal-row">
       <span class="label">Subtotal</span>
       <span class="amount mono" id="subtotal">$0</span>
+         </div>
+      <button class="wa-checkout" id="waCheckout" disabled>Enviar pedido por WhatsApp</button>
+      <button class="mp-checkout" id="mpCheckout" disabled>Pagar todo con Mercado Pago</button>
+      <div class="checkout-note">El pago con Mercado Pago se procesa de forma segura fuera de este sitio.</div>
     </div>
-    <button class="wa-checkout" id="waCheckout" disabled>Enviar pedido por WhatsApp</button>
   </div>
+</aside>
 </aside>
 
 <script>
@@ -448,6 +452,7 @@ const PRODUCTS = [
 ];
 
 const WHATSAPP_NUMBER = "56976792969";
+ const CHECKOUT_API_URL = "https://tienda-i14c.vercel.app/api/create-preference"; 
 const fmt = n => "$" + n.toLocaleString("es-CL");
 
 let cart = {};      // { productId: qty }
