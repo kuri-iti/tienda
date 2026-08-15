@@ -569,6 +569,35 @@ function renderCart(){
     msg += `%0ATotal: ${fmt(subtotal)}`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
   };
+  const mpBtn = document.getElementById('mpCheckout');
+  mpBtn.disabled = ids.length===0 || !CHECKOUT_API_URL;
+  mpBtn.textContent = CHECKOUT_API_URL ? "Pagar todo con Mercado Pago" : "Pagar con Mercado Pago (activar backend)";
+  mpBtn.onclick = async ()=>{
+    if(ids.length===0 || !CHECKOUT_API_URL) return;
+    mpBtn.disabled = true;
+    mpBtn.textContent = "Conectando con Mercado Pago...";
+    try{
+      const items = ids.map(id=>{
+        const p = PRODUCTS.find(pr=>pr.id===Number(id));
+        return { title:p.name, quantity:cart[id], unit_price:p.price };
+      });
+      const res = await fetch(CHECKOUT_API_URL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ items })
+      });
+      const data = await res.json();
+      if(data.init_point){
+        window.location.href = data.init_point;
+      } else {
+        throw new Error("Sin init_point en la respuesta");
+      }
+    } catch(err){
+      alert("No se pudo iniciar el pago. Intenta de nuevo o usa el pedido por WhatsApp.");
+      mpBtn.disabled = false;
+      mpBtn.textContent = "Pagar todo con Mercado Pago";
+    }
+  };
 }
 
 /* Drawer open/close */
